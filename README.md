@@ -1,7 +1,7 @@
 # GoSax
 High performance golang implementation of Symbolic Aggregate approXimation
 
-Based on the paper [A Symbolic Representation of Time Series, with Implications for Streaming Algorithms](www.cs.ucr.edu/~eamonn/SAX.pdf)
+Based on the paper [A Symbolic Representation of Time Series, with Implications for Streaming Algorithms](http://www.cs.ucr.edu/~eamonn/SAX.pdf)
 
 
 ## Usage
