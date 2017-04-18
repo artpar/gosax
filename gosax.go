@@ -81,10 +81,10 @@ func stdDev(numbers []float64, mean float64) float64 {
 
 
 /*
-Function will normalize an array (give it a mean of 0, and a
-standard deviation of 1) unless it's standard deviation is below
-epsilon, in which case it returns an array of zeros the length
-of the original array.
+  Function will normalize an array (give it a mean of 0, and a
+  standard deviation of 1) unless it's standard deviation is below
+  epsilon, in which case it returns an array of zeros the length
+  of the original array.
 */
 func (self *Sax) normalize(measureList []float64) []float64 {
   var err error
@@ -112,7 +112,7 @@ func (self *Sax) normalize(measureList []float64) []float64 {
 }
 
 /*
-Function takes a series of data, x, and transforms it to a string representation
+  Function takes a series of data, x, and transforms it to a string representation
 */
 func (self *Sax) ToLetterRepresentation(x []float64) (string, [][]int) {
   paaX, indices := self.toPaa(self.normalize(x))
@@ -122,10 +122,10 @@ func (self *Sax) ToLetterRepresentation(x []float64) (string, [][]int) {
 }
 
 /*
-Function performs Piecewise Aggregate Approximation on data set, reducing
-the dimension of the dataset x to w discrete levels. returns the reduced
-dimension data set, as well as the indices corresponding to the original
-data for each reduced dimension
+  Function performs Piecewise Aggregate Approximation on data set, reducing
+  the dimension of the dataset x to w discrete levels. returns the reduced
+  dimension data set, as well as the indices corresponding to the original
+  data for each reduced dimension
 */
 func (self *Sax) toPaa(x []float64) (approximation []float64, indices [][]int) {
 
@@ -191,7 +191,7 @@ func (self *Sax) CompareStrings(list_letters_a, list_letters_b []byte) (float64,
 }
 
 /*
-Compare two letters based on letter distance return distance between
+  Compare two letters based on letter distance return distance between
 */
 func (self *Sax) compare_letters(la, lb rune) float64 {
   return self.compareDict[string(la) + string(lb)]
@@ -207,9 +207,9 @@ func rangeIntArray(start, end int) []int {
 }
 
 /*
-Builds up the lookup table to determine numeric distance between two letters
-given an alphabet size.  Entries for both 'ab' and 'ba' will be created
-and will have identical values.
+  Builds up the lookup table to determine numeric distance between two letters
+  given an alphabet size.  Entries for both 'ab' and 'ba' will be created
+  and will have identical values.
 */
 func (self *Sax) build_letter_compare_dict() {
 
@@ -233,7 +233,7 @@ func (self *Sax) build_letter_compare_dict() {
   }
 }
 
-func (self *Sax) sliding_window(x []float64, numSubsequences int, overlappingFraction float64) (string, [][]int, error) {
+func (self *Sax) SlidingWindow(x []float64, numSubsequences int, overlappingFraction float64) (string, [][]int, error) {
   if numSubsequences < 0 {
     numSubsequences = 20
   }
