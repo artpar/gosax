@@ -27,6 +27,24 @@ func TestToLetterRepWindow(t *testing.T) {
   }
 }
 
+func TestSlidingWindow(t *testing.T) {
+  arr := []float64{1, 9, 4, 7, 3, 6, 1, 11, 4, 15, 23, 7, 3, 1, 11, 4, 15, 23, 7, 6, 10, 100}
+
+  for ws := 1; ws < 20; ws ++ {
+    for i := 3; i < 20; i++ {
+      self, err := NewSax(ws, i, 1e-6)
+      if err != nil {
+        panic(err)
+      }
+      //self.set_window_size(i)
+      letters, _, _ := self.SlidingWindow(arr, 4, 0.2)
+      t.Logf("Letters [%v][%d]: %v", ws, i, letters)
+    }
+  }
+}
+
+
+
 func TestLongToLetterRep(t *testing.T) {
   long_arr := []float64{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 6, 6, 6, 6, 10, 100}
   self, _ := NewSax(6, 5, 1e-6)
