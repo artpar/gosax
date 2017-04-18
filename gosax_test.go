@@ -1,6 +1,8 @@
 package gosax
 
-import "testing"
+import (
+  "testing"
+)
 
 func TestToLetterRep(t *testing.T) {
   arr := []float64{7, 1, 4, 4, 4, 4}
@@ -43,8 +45,6 @@ func TestSlidingWindow(t *testing.T) {
   }
 }
 
-
-
 func TestLongToLetterRep(t *testing.T) {
   long_arr := []float64{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 6, 6, 6, 6, 10, 100}
   self, _ := NewSax(6, 5, 1e-6)
@@ -54,6 +54,26 @@ func TestLongToLetterRep(t *testing.T) {
     panic("2")
   }
 }
+
+func BenchmarkLongToLetterRep(b *testing.B) {
+  long_arr := []float64{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 6, 6, 6, 6, 10, 100}
+  self, _ := NewSax(6, 5, 1e-6)
+
+  for i := 0; i < b.N; i++ {
+    self.ToLetterRepresentation(long_arr)
+  }
+}
+
+func BenchmarkSlidingWindow(b *testing.B) {
+  long_arr := []float64{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 6, 6, 6, 6, 10, 100}
+  self, _ := NewSax(6, 5, 1e-6)
+
+  for i := 0; i < b.N; i++ {
+    self.SlidingWindow(long_arr, 4, 0.4)
+  }
+}
+
+
 
 func TestCompareStrings(t *testing.T) {
   self, _ := NewSax(6, 5, 1e-6)

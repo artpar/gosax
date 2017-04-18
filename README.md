@@ -25,6 +25,14 @@ func main(){
 
 ```
 
+
+## Benchmark
+
+```
+BenchmarkLongToLetterRep-4   	  500000	      3586 ns/op
+BenchmarkSlidingWindow-4       	  200000	     11074 ns/op
+```
+
 ## Parameters
 
 - WordSize
@@ -70,4 +78,10 @@ To run the tests, just do:
 
 ```
 go test
+```
+
+To run benchmark:
+
+```
+go test -bench=.
 ```
