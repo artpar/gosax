@@ -2,15 +2,14 @@ package gosax
 
 import (
   "errors"
-  "strconv"
-  "github.com/montanaflynn/stats"
   "math"
+  "strconv"
   "strings"
 )
 
-var DictionarySizeIsNotSupported = errors.New("Dictionary size not supported")
-var StringsAreDifferentLength = errors.New("StringsAreDifferentLength")
-var OverlapSpecifiedIsNotSmallerThanWindowSize = errors.New("OverlapSpecifiedIsNotSmallerThanWindowSize")
+var ErrDictionarySizeIsNotSupported = errors.New("Dictionary size not supported")
+var ErrStringsAreDifferentLength = errors.New("StringsAreDifferentLength")
+var ErrOverlapSpecifiedIsNotSmallerThanWindowSize = errors.New("OverlapSpecifiedIsNotSmallerThanWindowSize")
 
 type Sax struct {
   aOffset       rune
@@ -27,7 +26,7 @@ type Sax struct {
 
 func NewSax(wordSize int, alphabetSize int, epsilon float64) (*Sax, error) {
   if alphabetSize < 3 || alphabetSize > 20 {
-    return nil, DictionarySizeIsNotSupported
+    return nil, ErrDictionarySizeIsNotSupported
   }
 
   self := Sax{}
@@ -63,6 +62,23 @@ func NewSax(wordSize int, alphabetSize int, epsilon float64) (*Sax, error) {
   return &self, nil
 }
 
+func mean(xs[]float64) float64 {
+  total := 0.0
+  for _, v := range xs {
+    total += v
+  }
+  return total / float64(len(xs))
+}
+
+func stdDev(numbers []float64, mean float64) float64 {
+  total := 0.0
+  for _, number := range numbers {
+    total += math.Pow(number - mean, 2)
+  }
+  variance := total / float64(len(numbers) - 1)
+  return math.Sqrt(variance)
+}
+
 
 /*
 Function will normalize an array (give it a mean of 0, and a
@@ -70,14 +86,19 @@ standard deviation of 1) unless it's standard deviation is below
 epsilon, in which case it returns an array of zeros the length
 of the original array.
 */
-func (self *Sax)  normalize(measureList []float64) []float64 {
+func (self *Sax) normalize(measureList []float64) []float64 {
+  var err error
+  if len(measureList) < 1 {
+    return measureList
+  }
+
   s2 := float64(1)
   m2 := float64(0)
-  m1, err := stats.Mean(stats.Float64Data(measureList))
+  m1 := mean(measureList)
   if err != nil {
     panic(err)
   }
-  s1, err := stats.StandardDeviation(stats.Float64Data(measureList))
+  s1 := stdDev(measureList, m1)
   if err != nil {
     panic(err)
   }
@@ -115,12 +136,9 @@ func (self *Sax) toPaa(x []float64) (approximation []float64, indices [][]int) {
   approximation = []float64{}
   indices = [][]int{}
   i := 0
-  for ; frameStart <= n - step; {
+  for frameStart <= n - step {
     thisFrame := x[frameStart:int(frameStart + step)]
-    m, e := stats.Mean(thisFrame)
-    if e != nil {
-      return
-    }
+    m := mean(thisFrame)
     approximation = append(approximation, m)
     indices = append(indices, []int{frameStart, int(frameStart + step)})
     i += 1
@@ -130,10 +148,10 @@ func (self *Sax) toPaa(x []float64) (approximation []float64, indices [][]int) {
 
 }
 
-func (self *Sax) alphabetize(paaX []float64) string {
-  /*
+/*
   Converts the Piecewise Aggregate Approximation of x to a series of letters.
-  */
+*/
+func (self *Sax) alphabetize(paaX []float64) string {
   alphabetizedX := ""
   for i := 0; i < len(paaX); i++ {
     letterFound := false
@@ -155,13 +173,13 @@ func (self *Sax) alphabetize(paaX []float64) string {
 
 }
 
-func (self *Sax) CompareStrings(list_letters_a, list_letters_b []byte) (float64, error) {
-  /*
+/*
   Compares two strings based on individual letter distance
   Requires that both strings are the same length
-  */
+*/
+func (self *Sax) CompareStrings(list_letters_a, list_letters_b []byte) (float64, error) {
   if len(list_letters_a) != len(list_letters_b) {
-    return 0, StringsAreDifferentLength
+    return 0, ErrStringsAreDifferentLength
   }
   mindist := 0.0
   for i := 0; i < len(list_letters_a); i++ {
@@ -177,15 +195,6 @@ Compare two letters based on letter distance return distance between
 */
 func (self *Sax) compare_letters(la, lb rune) float64 {
   return self.compareDict[string(la) + string(lb)]
-}
-
-func rangeFloatArray(start, end int) []float64 {
-  x := make([]float64, end - start)
-
-  for i := start; i < end; i++ {
-    x[i] = float64(i)
-  }
-  return x
 }
 
 func rangeIntArray(start, end int) []int {
@@ -237,13 +246,13 @@ func (self *Sax) sliding_window(x []float64, numSubsequences int, overlappingFra
   overlap := self.windowSize * int(overlappingFraction)
   moveSize := int(self.windowSize - overlap)
   if moveSize < 1 {
-    return "", windowIndices, OverlapSpecifiedIsNotSmallerThanWindowSize
+    return "", windowIndices, ErrOverlapSpecifiedIsNotSmallerThanWindowSize
   }
   ptr := 0
   n := len(x)
   stringRep := make([]string, 0)
-  for ; ptr < n - self.windowSize + 1; {
-    thisSubRange := x[ptr:ptr + self.windowSize]
+  for ptr < n - self.windowSize + 1 {
+    thisSubRange := x[ptr : ptr + self.windowSize]
     thisStringRep, _ := self.ToLetterRepresentation(thisSubRange)
     stringRep = append(stringRep, thisStringRep)
     windowIndices = append(windowIndices, []int{ptr, ptr + self.windowSize})
@@ -255,7 +264,6 @@ func (self *Sax) sliding_window(x []float64, numSubsequences int, overlappingFra
 
 func (self *Sax) BatchCompare(xStrings []string, refString string) []float64 {
 
-  //log.Printf("Compare [%v] against [%v]", refString, xStrings)
   res := make([]float64, len(xStrings))
   refBytes := []byte(refString)
   for i, st := range xStrings {

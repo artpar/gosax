@@ -1,2 +1,73 @@
-# gosax
-Golang implementation of Symbolic Aggregate approXimation
+# GoSax
+High performance golang implementation of Symbolic Aggregate approXimation
+
+Based on the paper [A Symbolic Representation of Time Series, with Implications for Streaming Algorithms](www.cs.ucr.edu/~eamonn/SAX.pdf)
+
+
+## Usage
+
+```
+
+package main
+
+import "github.com/artpar/gosax"
+
+
+func main(){
+  long_arr := []float64{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 6, 6, 6, 6, 10, 100}
+  // sax, _ := gosax.NewSax(wordSize, alphabetSize, epsilon)
+  sax, err := gosax.NewSax(6, 5, 1e-6)
+  // check for error before proceding
+
+  letters, _ := sax.ToLetterRepresentation(long_arr)
+  t.Logf("%v == bbbbce", letters)
+}
+
+```
+
+## Parameters
+
+- WordSize
+- AlphabetSize
+- Epsilon
+
+
+If you want to compare x1 and x2 (lists of values):
+
+```
+x1String, x1Indices = sax.ToLetterRepresentation(x1)
+x2String, x2Indices = sax.ToLetterRepresentation(x2)
+
+x1x2ComparisonScore = s.CompareStrings(x1String, x2String)
+```
+
+If you want to use the sliding window functionality:
+
+(say you want to break x3 into a lot of subsequences)
+
+can optionally specify the number of subsequences and how much each subsequence overlaps with the previous subsequence
+
+```
+x3Strings, x3Indices = sax.SlidingWindow(x3, numSubsequences, overlappingFraction)
+```
+
+Then if you wanted to compare each subsequence to another string (say x2):
+
+```
+x3x2ComparisonScores = s.BatchCompare(x3,x2)
+```
+
+
+Note:
+
+If you haven't generated the strings through the same SAX object, the scaling factor (square root of the length of the input vector over the word size) will be incorrect, you can correct it using:
+
+```
+sax.SetScalingFactor(scalingFactor)
+```
+
+To run the tests, just do:
+
+```
+go test
+```
