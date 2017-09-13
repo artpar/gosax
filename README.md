@@ -1,5 +1,8 @@
 # GoSax
-High performance golang implementation of Symbolic Aggregate approXimation
+
+### High performance golang implementation of Symbolic Aggregate approXimation
+
+### Time Series Classification and Clustering with Golang
 
 Based on the paper [A Symbolic Representation of Time Series, with Implications for Streaming Algorithms](http://www.cs.ucr.edu/~eamonn/SAX.pdf)
 

@@ -184,8 +184,8 @@ func (self *Sax) CompareStrings(list_letters_a, list_letters_b []byte) (float64,
   mindist := 0.0
   for i := 0; i < len(list_letters_a); i++ {
     mindist += math.Pow(self.compare_letters(rune(list_letters_a[i]), rune(list_letters_b[i])), 2)
-    mindist = self.scalingFactor * math.Sqrt(mindist)
   }
+  mindist = self.scalingFactor * math.Sqrt(mindist)
   return mindist, nil
 
 }
