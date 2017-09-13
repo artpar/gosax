@@ -3,6 +3,19 @@ High performance golang implementation of Symbolic Aggregate approXimation
 
 Based on the paper [A Symbolic Representation of Time Series, with Implications for Streaming Algorithms](http://www.cs.ucr.edu/~eamonn/SAX.pdf)
 
+```
+A Symbolic Representation of Time Series, with Implications for
+Streaming Algorithms
+Jessica Lin Eamonn Keogh Stefano Lonardi Bill Chiu
+University of California - Riverside
+Computer Science & Engineering Department
+Riverside, CA 92521, USA
+{jessica, eamonn, stelo, bill}@cs.ucr.edu
+
+Keywords
+Time Series, Data Mining, Data Streams, Symbolic, Discretize
+```
+
 
 ## Usage
 
