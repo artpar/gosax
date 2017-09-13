@@ -79,7 +79,7 @@ x3x2ComparisonScores = s.BatchCompare(x3,x2)
 ```
 
 
-Note:
+#### Note:
 
 If you haven't generated the strings through the same SAX object, the scaling factor (square root of the length of the input vector over the word size) will be incorrect, you can correct it using:
 
@@ -87,13 +87,13 @@ If you haven't generated the strings through the same SAX object, the scaling fa
 sax.SetScalingFactor(scalingFactor)
 ```
 
-To run the tests, just do:
+#### Tests
 
 ```
 go test
 ```
 
-To run benchmark:
+#### Benchmark:
 
 ```
 go test -bench=.
